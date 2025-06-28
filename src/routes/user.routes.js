@@ -172,7 +172,4 @@ router.get("/users/:id/bookings", getUserBooking);
 //  *         description: Payment failed
 //  */
 
-// router.post("/payments", (req, res) => {
-//   console.log(req, res);
-// });
 module.exports = router;
