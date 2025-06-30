@@ -1,8 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const cors = require("cors");
-const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./swagger");
 const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
@@ -15,7 +13,6 @@ app.use(bodyParser.urlencoded({ limit: "10mb", extended: false }));
 app.use("/api", userRoutes);
 app.use("/api", flightRoutes);
 app.use("/api", bookingRoutes);
-app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 mongoose.connect(process.env.DATABASE_URL);
 const db = mongoose.connection;
 db.on("error", (err) => console.error(err));
