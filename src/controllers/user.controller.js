@@ -1,19 +1,39 @@
 const mongoose = require("mongoose");
 const User = require("../models/user.model");
 const Booking = require("../models/booking.model");
+const jwt = require("jsonwebtoken");
+
+const createToken = (_id) => {
+  return jwt.sign({ _id }, process.env.SECRETE, { expiresIn: "3d" });
+};
 const createUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, isAdmin } = req.body;
+  const role = isAdmin ? "admin" : "user";
+  if (!name || !email || !password) {
+    return res.status(400).json({ massage: "provide all fields" });
+  }
   try {
-    const newUser = await User.signup({ name, email, password });
+    const newUser = await User.signup(name, email, password, role);
     if (!newUser) {
-      res.status(400).json({ message: "Unknown error", data: newUser });
+      return res.status(400).json({ message: "Unknown error", data: newUser });
     }
-    res.status(200).json({ message: "User Created" });
+    const token = createToken(newUser._id);
+    res.status(201).json({ name, email, token });
   } catch (error) {
-    return res.status(400).json({ message: "Users", data: error });
+    return res.status(400).json({ message: error.message });
   }
 };
-const login = async (req, res) => {};
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.login(email, password);
+
+    const token = createToken(user._id);
+    res.status(200).json({ email, token });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({}).sort({ createdAt: -1 });
@@ -77,5 +97,5 @@ module.exports = {
   deleteUser,
   updateUser,
   getUserBooking,
-  login,
+  loginUser,
 };
