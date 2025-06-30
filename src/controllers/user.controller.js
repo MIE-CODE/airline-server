@@ -4,22 +4,25 @@ const Booking = require("../models/booking.model");
 const createUser = async (req, res) => {
   const { name, email, password } = req.body;
   try {
-    const newUser = await User.create({ name, email, password });
-    if (newUser) {
-      res.status(200).json({ message: "User Created", data: newUser });
+    const newUser = await User.signup({ name, email, password });
+    if (!newUser) {
+      res.status(400).json({ message: "Unknown error", data: newUser });
     }
+    res.status(200).json({ message: "User Created" });
   } catch (error) {
-    console.log(error.message);
+    return res.status(400).json({ message: "Users", data: error });
   }
 };
+const login = async (req, res) => {};
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({}).sort({ createdAt: -1 });
-    if (users) {
-      res.status(200).json({ message: "Users", data: users });
+    if (!users) {
+      res.status(400).json({ message: "Failed", data: users });
     }
+    res.status(200).json({ message: "Users", data: users });
   } catch (error) {
-    throw new Error(error.message);
+    return res.status(400).json({ error: error.message });
   }
 };
 const getUserBooking = async (req, res) => {
@@ -74,4 +77,5 @@ module.exports = {
   deleteUser,
   updateUser,
   getUserBooking,
+  login,
 };

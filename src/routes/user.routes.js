@@ -5,6 +5,7 @@ const {
   deleteUser,
   updateUser,
   getUserBooking,
+  login,
 } = require("../controllers/user.controller");
 const router = express.Router();
 
@@ -49,12 +50,47 @@ const router = express.Router();
  *           type: string
  *           format: password
  *           example: StrongPassword123
- *         role:
- *           type: string
- *           enum: [user, admin]
- *           default: user
  */
 router.post("/users", createUser);
+/**
+ *
+ * @swagger
+ * /api/users/login:
+ *   post:
+ *     summary: Login
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserLogin'
+ *     responses:
+ *       201:
+ *         description: User created
+ *       400:
+ *         description: Invalid input
+ */
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UserLogin:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: johndoe@example.com
+ *         password:
+ *           type: string
+ *           format: password
+ *           example: StrongPassword123
+ */
+router.post("/users/login", login);
 /**
  * @swagger
  * /api/users:
