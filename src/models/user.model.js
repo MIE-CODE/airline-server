@@ -39,7 +39,7 @@ userSchema.statics.login = async function (email, password) {
   }
   const user = await this.findOne({ email });
   if (!user) {
-    throw Error("Incorrect emai");
+    throw Error("Incorrect email");
   }
   const match = await bycrypt.compare(password, user.password);
   if (!match) {

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Flight = require("../models/flight.model");
+const User = require("../models/user.model");
 
 const getFlights = async (req, res) => {
   try {
@@ -22,8 +23,13 @@ const createFlight = async (req, res) => {
     seatsAvailable,
     price,
     flightClass,
+    user,
   } = req.body;
   try {
+    const adminUser = await User.find({ _id: user });
+    if (adminUser.role !== "admin") {
+      return res.status(403).json({ message: "Only admin can create flight" });
+    }
     const flight = await Flight.create({
       airline,
       flightNumber,
