@@ -27,9 +27,16 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.login(email, password);
-
+    const userInfo = await User.findOne(user._id);
     const token = createToken(user._id);
-    res.status(200).json({ email, token });
+    res.status(200).json({
+      user: {
+        name: userInfo.name,
+        email: userInfo.email,
+        role: userInfo.role,
+      },
+      token,
+    });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
