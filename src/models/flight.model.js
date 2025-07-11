@@ -46,6 +46,7 @@ const flightSchema = new mongoose.Schema(
       enum: ["economy", "business", "first"],
       default: "economy",
     },
+    id: { type: mongoose.Types.UUID },
   },
   { collection: "flights" },
   { timestamps: true }
