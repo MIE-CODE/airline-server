@@ -25,7 +25,7 @@ const bookFlight = async (req, res) => {
 
 const getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({}).sort({ createdAt: -1 });
+    const bookings = await Booking.find(req.id).sort({ createdAt: -1 });
 
     const populatedBookings = await Promise.all(
       bookings.map(async (val) => {
