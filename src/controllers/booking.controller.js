@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Booking = require("../models/booking.model");
+const Flight = require("../models/flight.model");
 const bookFlight = async (req, res) => {
   const { flight, user, seatNumber, bookingDate, status, payment } = req.body;
 
@@ -24,12 +25,26 @@ const bookFlight = async (req, res) => {
 
 const getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({}).sort({ createdAt: -1 });
+    const bookings = await Booking.find(req.id).sort({ createdAt: -1 });
+
+    const populatedBookings = await Promise.all(
+      bookings.map(async (val) => {
+        const flight = await Flight.findById(val.flight);
+        return {
+          ...val.toObject(),
+          flight,
+        };
+      })
+    );
+
     if (bookings) {
-      res.status(200).json({ message: "Bookings", data: bookings });
+      res.status(200).json({
+        message: "Bookings",
+        data: populatedBookings,
+      });
     }
   } catch (error) {
-    res.status(400).json({ message: "An Error occured" });
+    res.status(400).json({ message: error.message });
   }
 };
 const getBookingById = async (req, res) => {
