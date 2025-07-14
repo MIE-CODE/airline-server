@@ -7,7 +7,7 @@ const getAnnouncements = async (req, res) => {
         .status(200)
         .json({ message: "Announcements", data: announcements });
     }
-    res.status(404).json({ message: "You shold fix this later" });
+    res.status(404).json({ message: "You should fix this later" });
   } catch (error) {
     res.status(401).json({ message: error.message });
   }
