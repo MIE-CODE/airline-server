@@ -1,15 +1,16 @@
 const Announcement = require("../models/announcements.model");
 const getAnnouncements = async (req, res) => {
   try {
-    const announcement = Announcement.find().sort({ createdAt: -1 });
-    if (announcement) {
+    const announcements = await Announcement.find({}).sort({ createdAt: -1 });
+    if (announcements) {
       return res
         .status(200)
-        .json({ message: "Announcements", data: announcement });
+        .json({ message: "Announcements", data: announcements });
     }
-    res.status(401).json({ message: "You shold fix this later" });
-  } catch (error) {}
-  console.log(req.body);
+    res.status(404).json({ message: "You should fix this later" });
+  } catch (error) {
+    res.status(401).json({ message: error.message });
+  }
 };
 const createAnnouncement = async (req, res) => {
   const { message, type, priority, createdBy, expiresAt } = req.body;
