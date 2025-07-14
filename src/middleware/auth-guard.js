@@ -9,6 +9,7 @@ const authGuard = async (req, res, next) => {
   try {
     const { _id } = jwt.verify(token, process.env.SECRETE);
     req.user = await User.findOne({ _id }).select("_id");
+    req.userRole = await User.findOne({ _id });
     next();
   } catch (error) {
     res.status(401).json({ message: "Unauthorized" });

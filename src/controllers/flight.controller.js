@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Flight = require("../models/flight.model");
 const User = require("../models/user.model");
+const Announcement = require("../models/announcements.model");
 
 const getFlights = async (req, res) => {
   try {
@@ -23,26 +24,40 @@ const createFlight = async (req, res) => {
     seatsAvailable,
     price,
     flightClass,
-    user,
   } = req.body;
+
   try {
-    const adminUser = await User.find({ _id: user });
-    if (adminUser.role !== "admin") {
-      return res.status(403).json({ message: "Only admin can create flight" });
+    const user = await User.findOne(req.user).select("role");
+    console.log(user.role);
+
+    if (user.role === "admin") {
+      const flight = await Flight.create({
+        airline,
+        flightNumber,
+        from,
+        to,
+        departureTime,
+        arrivalTime,
+        totalSeats,
+        seatsAvailable,
+        price,
+        flightClass,
+      });
+      const announcement = await Announcement.create({
+        flightId: flight.id,
+        message: "Flight 213 to JFK is now boarding at Gate A5",
+        type: "boarding",
+      });
+      req.io.emit("announcement", {
+        message: "announcement",
+        data: announcement,
+      });
+      return res.status(201).json({ message: "Flight created", data: flight });
+      // io.on("connection", () => {
+      //   io.emit("announcement", { message: "announcement", data: flight });
+      // });
     }
-    const flight = await Flight.create({
-      airline,
-      flightNumber,
-      from,
-      to,
-      departureTime,
-      arrivalTime,
-      totalSeats,
-      seatsAvailable,
-      price,
-      flightClass,
-    });
-    res.status(201).json({ message: "Flight created", data: flight });
+    res.status(403).json({ message: "Only admin can create flight" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
