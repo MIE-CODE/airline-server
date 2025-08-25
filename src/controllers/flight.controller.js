@@ -45,17 +45,15 @@ const createFlight = async (req, res) => {
       });
       const announcement = await Announcement.create({
         flightId: flight.id,
-        message: "Flight 213 to JFK is now boarding at Gate A5",
-        type: "boarding",
+        message: `Flight ${flight.flightNumber} to ${flight.to} is available for bookings`,
+        type: "General",
+        priority: "Low",
       });
       req.io.emit("announcement", {
-        message: "announcement",
+        message: "New Flight ✈️",
         data: announcement,
       });
       return res.status(201).json({ message: "Flight created", data: flight });
-      // io.on("connection", () => {
-      //   io.emit("announcement", { message: "announcement", data: flight });
-      // });
     }
     res.status(403).json({ message: "Only admin can create flight" });
   } catch (error) {
