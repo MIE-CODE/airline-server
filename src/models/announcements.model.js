@@ -10,12 +10,12 @@ const announcementSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["general", "gate-change", "delay", "boarding", "cancellation"],
+      enum: ["General", "Gate-change", "Delay", "Boarding", "Cancellation"],
       default: "general",
     },
     priority: {
       type: String,
-      enum: ["low", "medium", "high", "critical"],
+      enum: ["Low", "Medium", "High", "Critical"],
       default: "medium",
     },
     createdBy: {
